@@ -3,52 +3,56 @@ function applyLabel() {
   const myGmailLabels = GmailApp.getUserLabels();
   Logger.log(myGmailLabels);
   const oxLabel = "OX PRO";
-  const vicsLabel = "OX VICTORIA";
+  const vicsLabel = "OX PRO/OX VICTORIA";
 
   const testLabel = "poopybutthole";
 
   const labelsHolderArr = [];
 
-  let tempLabel;
 
-  if(labelsHolderArr.includes(testLabel)){
-    Logger.log('it does');
-     tempLabel = GmailApp.getUserLabelByName(testLabel);
-  }else{
-    Logger.log('it does not');
-      tempLabel = GmailApp.createLabel(testLabel);
-  }
-
-Logger.log( 'hhhhhhhh',tempLabel);
 
   myGmailLabels.map(label => {
     Logger.log(label.getName());
     labelsHolderArr.push(label.getName())
   })
 
-  Logger.log(labelsHolderArr);
+  // // Logger.log(labelsHolderArr);
+
+  let tempLabel;
+
+  if (labelsHolderArr.includes(vicsLabel)) {
+    Logger.log('Label is already created');
+    tempLabel = GmailApp.getUserLabelByName(vicsLabel);
+  } else {
+    Logger.log('Label is being Created');
+    tempLabel = GmailApp.createLabel(vicsLabel);
+  }
+
+
+
 
 
   threads.map(message => {
-    
-    Logger.log(message.getLastMessageDate().getDay());
+    var victoriaDateArr = [3.0, 4.0, 5.0];
     var date = message.getLastMessageDate().getDay(); // date/time
-    // var body = message.getBody(); // mail
+    var hourOfDay = message.getLastMessageDate().getHours();
+    Logger.log(hourOfDay);
     // Logger.log(date)
-    // Logger.log(body)
+
 
 
     const currentMessageSubject = message.getFirstMessageSubject();
-    Logger.log(currentMessageSubject);
-    Logger.log(currentMessageSubject.includes('Confirmation Request'));
-
-    if(currentMessageSubject.includes('Eddie is Awesome' ) && date == "2.0"){
-      Logger.log("yeah");
+    // Logger.log(currentMessageSubject);
+    // Logger.log(currentMessageSubject.includes('Confirmation Request'));
+    if (currentMessageSubject.includes('Confirmation Request') && victoriaDateArr.includes(date)) {
+      if (date == 3.0 && hourOfDay <= 12) {
+        Logger.log("This still belongs to Eddie");
+        return;
+      }
       message.addLabel(tempLabel);
-    }else{
-
+    } else {
       Logger.log("nope")
     }
-  })  
+  })
 }
 

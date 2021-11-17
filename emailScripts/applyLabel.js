@@ -4,7 +4,7 @@ function applyLabel() {
   Logger.log(myGmailLabels);
   const oxLabel = "OX PRO";
   const vicsLabel = "OX PRO/OX VICTORIA";
-
+  const newOXAccounts = "OX PRO/OX NEW ACCOUNTS";
   const testLabel = "poopybutthole";
 
   const labelsHolderArr = [];
@@ -19,7 +19,9 @@ function applyLabel() {
   // // Logger.log(labelsHolderArr);
 
   let tempLabel;
+  let accountLabel;
 
+  //CREATES VICTORIAS LABEL IF I DONT HAVE IT AND TELLS ME IT IS ALREADY CREATED IF I DO
   if (labelsHolderArr.includes(vicsLabel)) {
     Logger.log('Label is already created');
     tempLabel = GmailApp.getUserLabelByName(vicsLabel);
@@ -29,7 +31,13 @@ function applyLabel() {
   }
 
 
-
+  //CREATES OX ACCOUNT LABEL IF I DONT HAVE IT AND TELLS ME IT IS ALREADY CREATED IF I DO
+  if (labelsHolderArr.includes(newOXAccounts)) {
+    Logger.log('Label is already created');
+  } else {
+    Logger.log('Label is being Created');
+    accountLabel = GmailApp.createLabel(newOXAccounts);
+  }
 
 
   threads.map(message => {
@@ -50,8 +58,15 @@ function applyLabel() {
         return;
       }
       message.addLabel(tempLabel);
+      message.moveToArchive();
     } else {
       Logger.log("nope")
+    }
+
+
+    if (currentMessageSubject.includes('New account request')) {
+      Logger.log('New account email being pushed to label');
+      message.addLabel(accountLabel);
     }
   })
 }

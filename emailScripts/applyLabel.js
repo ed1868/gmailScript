@@ -1,14 +1,14 @@
 function applyLabel() {
   const threads = GmailApp.getInboxThreads();
   const myGmailLabels = GmailApp.getUserLabels();
+
   Logger.log(myGmailLabels);
   const oxLabel = "OX PRO";
   const vicsLabel = "OX PRO/OX VICTORIA";
-  const newOXAccounts = "OX PRO/OX NEW ACCOUNTS";
+
   const testLabel = "poopybutthole";
 
   const labelsHolderArr = [];
-
 
 
   myGmailLabels.map(label => {
@@ -16,10 +16,9 @@ function applyLabel() {
     labelsHolderArr.push(label.getName())
   })
 
-  // // Logger.log(labelsHolderArr);
 
   let tempLabel;
-  let accountLabel;
+
 
   //CREATES VICTORIAS LABEL IF I DONT HAVE IT AND TELLS ME IT IS ALREADY CREATED IF I DO
   if (labelsHolderArr.includes(vicsLabel)) {
@@ -30,44 +29,48 @@ function applyLabel() {
     tempLabel = GmailApp.createLabel(vicsLabel);
   }
 
-
-  //CREATES OX ACCOUNT LABEL IF I DONT HAVE IT AND TELLS ME IT IS ALREADY CREATED IF I DO
-  if (labelsHolderArr.includes(newOXAccounts)) {
-    Logger.log('Label is already created');
-  } else {
-    Logger.log('Label is being Created');
-    accountLabel = GmailApp.createLabel(newOXAccounts);
-  }
-
-
   threads.map(message => {
-    var victoriaDateArr = [3.0, 4.0, 5.0];
-    var date = message.getLastMessageDate().getDay(); // date/time
-    var hourOfDay = message.getLastMessageDate().getHours();
+
+    let victoriaDateArr = [3.0, 4.0, 5.0];
+    let date = message.getLastMessageDate().getDay(); // date/time
+    let hourOfDay = message.getLastMessageDate().getHours();
     Logger.log(hourOfDay);
     // Logger.log(date)
 
-
-
+    let messageSenders = message.getMessages();
+    let subjectArr = ['BONOTEL - Reservation', 'Confirmation Request', 'DERBY - Reservation', 'HBSI - Reservation', 'Your Order has been Processed'];
     const currentMessageSubject = message.getFirstMessageSubject();
-    // Logger.log(currentMessageSubject);
-    // Logger.log(currentMessageSubject.includes('Confirmation Request'));
-    if (currentMessageSubject.includes('Confirmation Request') && victoriaDateArr.includes(date)) {
-      if (date == 3.0 && hourOfDay <= 12) {
-        Logger.log("This still belongs to Eddie");
-        return;
+    Logger.log(currentMessageSubject);
+    let isOti = false;
+
+    messageSenders.map(email => {
+      Logger.log(email.getFrom());
+      let emailSender = email.getFrom();
+      if (emailSender == "ox@overseasinternational.com") {
+        Logger.log('This email is coming from Overseas');
+        isOti = true;
+
+        subjectArr.forEach(subject => {
+          if (currentMessageSubject.includes(subject) && victoriaDateArr.includes(date) && isOti) {
+            if (date == 3.0 && hourOfDay < 12) {
+              Logger.log(date)
+              Logger.log("This still belongs to Eddie");
+              return;
+            }
+            Logger.log('This Belongs to Vic');
+            message.addLabel(tempLabel);
+            message.moveToArchive();
+          }
+        })
+
+
+      } else {
+        isOti = false;
+
       }
-      message.addLabel(tempLabel);
-      message.moveToArchive();
-    } else {
-      Logger.log("nope")
-    }
 
-
-    if (currentMessageSubject.includes('New account request')) {
-      Logger.log('New account email being pushed to label');
-      message.addLabel(accountLabel);
-    }
-  })
+    })
+    Logger.log(isOti);
+  });
 }
 

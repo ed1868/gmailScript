@@ -38,7 +38,7 @@ function applyLabel() {
     // Logger.log(date)
 
     let messageSenders = message.getMessages();
-    let subjectArr = ['BONOTEL - Reservation', 'Confirmation Request', 'DERBY - Reservation', 'HBSI - Reservation', 'Your Order has been Processed'];
+    let subjectArr = ['BONOTEL - Reservation', 'Confirmation Request', 'DERBY - Reservation', 'HBSI - Reservation', 'Your Order has been Processed', 'New account request', 'Payment due now', 'Re: URGENT:'];
     const currentMessageSubject = message.getFirstMessageSubject();
     Logger.log(currentMessageSubject);
     let isOti = false;
